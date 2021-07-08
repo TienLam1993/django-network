@@ -2,20 +2,28 @@
 
 {% block body %}
 {% if user.is_authenticated %}
-<div>
-    <form action=" {% url 'index' %}" method="POST">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <input type="submit" class="btn btn-primary" value="Post">
-    </form>
-    <hr>
+<div class="row">
+    <div class="col-sm">
+        <h3>Hello, {{ user.username }}!</h3>
+        <form action=" {% url 'index' %}" method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                {{ form }}
+            </div>
+            <input type="submit" class="btn btn-primary" value="Post">
+        </form>
+        <hr>
+    </div>
 </div>
-<div>
+<div class="row">
     <h3>Display the follow posts here</h3>
 </div>
 
 {% else %}
-<h4> Please <a href="{% url 'login' %}">Log in</a> to create new posts and follow your friends! </h4>
-<h4>Or discover <a href="{% url 'all' %}">All posts</a>!</h4>
+<div class="row">
+    <h4> Please <a href="{% url 'login' %}">Log in</a> to create new posts and follow your friends! </h4>
+    <h4>Or discover <a href="{% url 'all' %}">All posts</a>!</h4>
+</div>
+
 {% endif %}
 {% endblock %}

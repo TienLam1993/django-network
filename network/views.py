@@ -1,11 +1,13 @@
-from datetime import date
+import json
 
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
+from django.http.response import JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.forms import ModelForm, Textarea, CharField
+
 
 from .models import User, Post
 
@@ -16,8 +18,6 @@ class CreatePostForm(ModelForm):
         fields = ['content']
         widgets = {
             'content': Textarea(attrs={
-                'cols': 80,
-                'rows': 8,
                 'placeholder': 'What are you thinking?'
             })
         }
@@ -96,4 +96,38 @@ def register(request):
 
 
 def all(request):
-    return render(request, 'network/all.html')
+    posts = Post.objects.all()
+    return render(request, 'network/all.html', {
+        'posts': posts
+    })
+
+
+def profile(request, user_id):
+    user = User.objects.get(id=user_id)
+    posts = Post.objects.filter(poster=user)
+
+    return render(request, 'network/profile.html', {
+        'user': user,
+        'posts': posts
+
+    })
+
+
+
+def like(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        id = data.get('id')
+        post = Post.objects.get(id=id)
+
+        post.like = post.like + 1
+        post.save(update_fields=['like'])
+
+        return JsonResponse({"message": "liked.", "id": id, "like_count": post.like})
+
+    else:
+        return JsonResponse({'error': 'POST request required'})
+
+
+def edit():
+    pass

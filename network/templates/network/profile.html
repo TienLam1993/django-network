@@ -1,6 +1,18 @@
 {% extends "network/layout.html" %}
 
 {% block body %}
+
+{% if request.user != user %}
+<h4 style="text-align: center;">You are viewing the profile page of {{ user.username }}! </h4>
+{% if user in request.user.followings %}
+<button id="follow" type="button" class="btn btn-outline-primary">Unfollow</button>
+{% else %}
+<button id="unfollow" type="button" class="btn btn-outline-primary">Follow</button>
+{% endif %}
+{% else %}
+<h4>This is your profile page!</h4>
+{% endif %}
+<hr>
 {% for post in posts %}
 <div class="row">
     <div class="card" style="width: 100%;">
