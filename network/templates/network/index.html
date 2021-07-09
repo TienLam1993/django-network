@@ -25,10 +25,10 @@
             </a>
 
             <p class="card-text" style="text-align: right; font-size: smaller; font-style: italic;">{{ post.date_created }}</p>
-
-            <p id="content_{{ post.id }}" class="card-text">{{ post.content }}</p>
-
-            <textarea id="edittext_{{ post.id }}" hidden placeholder="{{ post.content }}"></textarea>
+    
+            <p id="content_{{ post.id }}" class="card-text" style="white-space: pre-wrap;">{{ post.content }}</p>
+          
+            <textarea id="edittext_{{ post.id }}" hidden>{{ post.content }}</textarea>
 
             <p id="like_display_{{ post.id }}" class="card-text" style="text-align: right; font-size: smaller; font-style: italic;">
                 This post has {{ post.like }} like!</p>
@@ -48,6 +48,24 @@
 </div>
 {% endfor %}
 
+<nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+
+        {% if posts.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page=1">&laquo; First</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ posts.previous_page_number }}">Previous</a></li>         
+        {% endif %}
+
+        <li class="page-item"><a class="page-link" href="">Page {{ posts.number }} of {{ posts.paginator.num_pages }}</a></li>
+        
+        {% if posts.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ posts.next_page_number }}">Next</a></li>
+            <li class="page-item"><a class="page-link" href="?page={{ posts.paginator.num_pages }}">Last &raquo;</a></li>          
+        {% endif %}
+        
+    </ul>
+  </nav>
+
 {% else %}
 <div class="row">
     <p> Please <a href="{% url 'login' %}">Log in</a> to create new posts and follow your friends! </p>
@@ -57,4 +75,5 @@
 </div>
 
 {% endif %}
+
 {% endblock %}

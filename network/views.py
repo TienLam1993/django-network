@@ -9,7 +9,7 @@ from django.urls import reverse
 from django.forms import ModelForm, Textarea, CharField
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
-
+from django.core.paginator import Paginator
 
 from .models import User, Post
 
@@ -37,7 +37,14 @@ def index(request):
         if request.user.is_authenticated:
 
             followings = request.user.followings.all()
-            posts = Post.objects.filter(Q(poster__in=followings)|Q(poster=request.user)).order_by('-date_created')
+            posts_list = Post.objects.filter(Q(poster__in=followings)|Q(poster=request.user)).order_by('-date_created')
+
+            paginator = Paginator(posts_list, 10) # Show 3 posts per page.
+
+                    
+            page_number = request.GET.get('page')
+            posts = paginator.get_page(page_number)
+
             return render(request, "network/index.html", {
                 'form': CreatePostForm(),
                 'posts': posts
@@ -109,7 +116,12 @@ def register(request):
 
 
 def all(request):
-    posts = Post.objects.all()
+
+    posts_list = Post.objects.all().order_by('-date_created')
+    paginator = Paginator(posts_list, 10) # Show 10 posts per page.  
+    page_number = request.GET.get('page')
+    posts = paginator.get_page(page_number)
+
     return render(request, 'network/all.html', {
         'posts': posts
     })
@@ -119,14 +131,19 @@ def profile(request, user_id):
     '''User Profile page'''
 
     owner = User.objects.get(id=user_id)
-    posts = Post.objects.filter(poster=owner)
+    posts_list = Post.objects.filter(poster=owner).order_by('-date_created')
+    paginator = Paginator(posts_list, 10) # Show 10 posts per page.  
+    page_number = request.GET.get('page')
+    posts = paginator.get_page(page_number)
     follower_count = owner.followers.all().count()
+    followings_count = owner.followings.all().count()
 
 
     return render(request, 'network/profile.html', {
         'owner': owner,
         'posts': posts,
-        'follower_count': follower_count
+        'follower_count': follower_count,
+        'followings_count': followings_count
 
     })
 
@@ -170,7 +187,7 @@ def edit(request):
         post.save(update_fields=['content'])
 
         return JsonResponse({'message': 'Post updated'})
-        
+
 @login_required
 def follow(request):
     '''Follow button'''

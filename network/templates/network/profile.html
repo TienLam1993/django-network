@@ -4,7 +4,8 @@
 {% if request.user.is_authenticated %}
     {% if request.user != owner %}
         <h4 style="text-align: center;">You are viewing the profile page of {{ owner.username }}! </h4>
-        <p id="follower">This user has {{ follower_count }} followers</p>
+        <p id="follower">This user has {{ follower_count }} followers.</p>
+        <p>This user is following {{ followings_count}} people.</p>
         <button id="follow" type="button" class="btn btn-outline-primary" onclick="followFunction('{{ owner.id }}')">Follow</button>
     {% else %}
         <h4 style="text-align: center;">This is your profile page!</h4>
@@ -19,17 +20,28 @@
 <div class="row">
     <div class="card" style="width: 100%;">
         <div class="card-body">
+
             <a href="{% url 'profile' post.poster.id %}">
                 <h5 class="card-title">{{ post.poster }}</h5>
             </a>
 
-            <p class="card-text" style="text-align: right; font-style: italic;">{{ post.date }}</p>
-            <p class="card-text">{{ post.content }}</p>
-            <p id="like_display_{{ post.id }}" class="card-text" style="text-align: right;">This post has {{ post.like }} like!</p>
+            <p class="card-text" style="text-align: right; font-size: smaller; font-style: italic;">{{ post.date_created }}</p>
+
+            <p id="content_{{ post.id }}" class="card-text" style="white-space: pre-wrap;">{{ post.content }}</p>
+
+            <textarea id="edittext_{{ post.id }}" hidden>{{ post.content }}</textarea>
+
+            <p id="like_display_{{ post.id }}" class="card-text" style="text-align: right; font-size: smaller; font-style: italic;">
+                This post has {{ post.like }} like!</p>
+            {% if request.user.is_authenticated %}
             <button id="like_{{ post.id }}" type="button" class="btn btn-primary"
                 onclick="likeFunction('{{ post.id }}')">Like</button>
+            {% endif %}
             {% if post.poster == request.user %}
-            <button id="edit_{{ post.id }}" type="button" class="btn btn-outline-primary">Edit</button>
+            <button id="edit_{{ post.id }}" type="button" class="btn btn-outline-primary" 
+                onclick="editFunction('{{ post.id }}')">Edit</button>
+            <button id="save_{{ post.id }}" type="button" class="btn btn-outline-primary" hidden
+                onclick="saveFunction('{{ post.id }}')">Save</button>
             {% endif %}
         </div>
     </div>
