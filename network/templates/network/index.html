@@ -15,14 +15,45 @@
         <hr>
     </div>
 </div>
+{% for post in posts %}
 <div class="row">
-    <h3>Display the follow posts here</h3>
+    <div class="card" style="width: 100%;">
+        <div class="card-body">
+
+            <a href="{% url 'profile' post.poster.id %}">
+                <h5 class="card-title">{{ post.poster }}</h5>
+            </a>
+
+            <p class="card-text" style="text-align: right; font-size: smaller; font-style: italic;">{{ post.date_created }}</p>
+
+            <p id="content_{{ post.id }}" class="card-text">{{ post.content }}</p>
+
+            <textarea id="edittext_{{ post.id }}" hidden placeholder="{{ post.content }}"></textarea>
+
+            <p id="like_display_{{ post.id }}" class="card-text" style="text-align: right; font-size: smaller; font-style: italic;">
+                This post has {{ post.like }} like!</p>
+
+            <button id="like_{{ post.id }}" type="button" class="btn btn-primary"
+                onclick="likeFunction('{{ post.id }}')">Like</button>
+
+            {% if post.poster == request.user %}
+            <button id="edit_{{ post.id }}" type="button" class="btn btn-outline-primary" 
+                onclick="editFunction('{{ post.id }}')">Edit</button>
+            <button id="save_{{ post.id }}" type="button" class="btn btn-outline-primary" hidden
+                onclick="saveFunction('{{ post.id }}')">Save</button>
+            {% endif %}
+        </div>
+    </div>
+
 </div>
+{% endfor %}
 
 {% else %}
 <div class="row">
-    <h4> Please <a href="{% url 'login' %}">Log in</a> to create new posts and follow your friends! </h4>
-    <h4>Or discover <a href="{% url 'all' %}">All posts</a>!</h4>
+    <p> Please <a href="{% url 'login' %}">Log in</a> to create new posts and follow your friends! </p>
+</div>
+<div class="row">
+    <p>Or discover <a href="{% url 'all' %}">All posts</a>!</p>
 </div>
 
 {% endif %}

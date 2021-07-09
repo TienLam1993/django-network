@@ -9,7 +9,7 @@
                 <h5 class="card-title">{{ post.poster }}</h5>
             </a>
 
-            <p class="card-text" style="text-align: right; font-style: italic;">{{ post.date }}</p>
+            <p class="card-text" style="text-align: right; font-style: italic;">{{ post.date_created }}</p>
             <p class="card-text">{{ post.content }}</p>
             <p id="like_display_{{ post.id }}" class="card-text" style="text-align: right;">This post has {{ post.like }} like!</p>
             <button id="like_{{ post.id }}" type="button" class="btn btn-primary"

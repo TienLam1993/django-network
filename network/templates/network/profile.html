@@ -1,16 +1,18 @@
 {% extends "network/layout.html" %}
 
 {% block body %}
-
-{% if request.user != user %}
-<h4 style="text-align: center;">You are viewing the profile page of {{ user.username }}! </h4>
-{% if user in request.user.followings %}
-<button id="follow" type="button" class="btn btn-outline-primary">Unfollow</button>
+{% if request.user.is_authenticated %}
+    {% if request.user != owner %}
+        <h4 style="text-align: center;">You are viewing the profile page of {{ owner.username }}! </h4>
+        <p id="follower">This user has {{ follower_count }} followers</p>
+        <button id="follow" type="button" class="btn btn-outline-primary" onclick="followFunction('{{ owner.id }}')">Follow</button>
+    {% else %}
+        <h4 style="text-align: center;">This is your profile page!</h4>
+    {% endif %}
 {% else %}
-<button id="unfollow" type="button" class="btn btn-outline-primary">Follow</button>
-{% endif %}
-{% else %}
-<h4>This is your profile page!</h4>
+    <h5 style="text-align: center;">You are viewing the profile page of {{ owner.username }}! </h5>
+    <br>
+    <h5 style="text-align: center;">Please <a href="{% url 'login' %}">Log in</a> if you want to follow!</h5>
 {% endif %}
 <hr>
 {% for post in posts %}
